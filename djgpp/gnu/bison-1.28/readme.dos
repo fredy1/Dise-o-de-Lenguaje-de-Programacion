@@ -1,0 +1,74 @@
+This is a DOS/DJGPP port of GNU Bison 1.28. This document covers issues
+specific to DJGPP. 
+
+Contents
+========
+
+1. Installing the binary
+2. DJGPP port specific changes
+3. DJGPP port specific changes from 1.14.7
+4. Building from sources
+
+Installing the binary
+=====================
+
+Unzip the binary package with the option to preserve directories 
+(the -d option in PKUNZIP, the -directories option in PKZIP 2.5)
+from the top of your DJGPP directory tree.
+
+This port puts the files 'bison.sim' and 'bison.hai' into the
+'%DJDIR%/lib' and '%DJDIR%/share' directories. '%DJDIR%/lib' is the
+location used by past ports of Bison and is the location forced by
+DJGPP 2.03's djgpp.env. But '%DJDIR/share' is the location preferred
+by Bison and which will be reflected in DJGPP 2.04's djgpp.env. To make
+the transiton now, delete the part of djgpp.env that looks like this:
+
+[bison]
+BISON_HAIRY=%DJDIR%/lib/bison.hai
+BISON_SIMPLE=%DJDIR%/lib/bison.sim
+
+then delete 'lib/bison.sim' and 'lib/bison.hai' from the top of your
+DJGPP tree.
+
+DJGPP port specific changes
+===========================
+
+* 'bison -y' now outputs y.tab.c and y.tab.h when in a LFN environment.
+* The files 'bison.sim' and 'bison.hai' are now placed in both '%DJDIR%/lib'
+  and '%DJDIR%/share'. 
+* The file 'diffs.dos' in bsn128s.zip contains the changes made to the
+  official source distribution for the DJGPP port.
+
+Building from sources
+=====================
+
+You will need:
+
+* Bash 2.03
+* the GCC compiler and binutils
+* sed (for 'make install')
+* DJGPP v2.03 or later
+
+Unzip the source archive with the option to preserve directories 
+(the -d option in the old PKUNZIP, the -directories option in newer
+versions of PKZIP) from the top of your DJGPP directory tree. Install
+the Bash binary and required utilities if you haven't already done so.
+
+The files produced by 'configure' have been included, so all you have
+to do is run 'make' then 'make install' then 'sh djfix.sh'. The file
+'djfix.sh' renames the file 'bison.simple' to 'bison.sim' and
+renames 'bison.hairy' to 'bison.hai' in '%DJDIR%/share'. If you do decide
+to reconfigure, then please use 'djconfig.bat' or be sure to set
+'BISON_SIMPLE_NAME=bison.sim' and 'BISON_HAIRY_NAME=bison.hai' in the
+environent before running 'configure'.
+
+Also, if you run 'make install', you will need to delete the part in
+djgpp.env that looks like this:
+
+[bison]
+BISON_HAIRY=%DJDIR%/lib/bison.hai
+BISON_SIMPLE=%DJDIR%/lib/bison.sim
+
+Bye,
+Mark E. <snowball3@bigfoot.com>
+

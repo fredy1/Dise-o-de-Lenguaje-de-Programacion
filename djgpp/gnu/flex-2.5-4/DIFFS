@@ -1,0 +1,266 @@
+*** main.c~0	Sun May 26 06:42:56 1996
+--- main.c	Wed Mar 26 11:49:10 1997
+*************** static char *backing_name = "lex.bck";
+*** 121,128 ****
+--- 121,131 ----
+  #endif
+  
+  #ifdef MS_DOS
++ #ifndef __DJGPP__
++ /* DJGPP's default stack is large enough, and this produces a warning.  */
+  extern unsigned _stklen = 16384;
+  #endif
++ #endif
+  
+  static char outfile_path[MAXLINE];
+  static int outfile_created = 0;
+*************** char **argv;
+*** 609,614 ****
+--- 612,644 ----
+  	action_array[0] = '\0';
+  
+  	program_name = argv[0];
++ 
++ #ifdef MS_DOS
++ 	/* MS-DOS doesn't allow `+' character in filenames.  Allow "flexx"
++ 	   or "flexpp" instead.  Avoid confusion due to the .exe suffix. */
++ 	{
++ 		size_t name_len = strlen (program_name);
++ 		char *suffix = 0;
++ 
++ 		if (name_len >= 4)
++ 			{
++ 			suffix = program_name + name_len - 4;
++ 
++ 			if ( strcmp( suffix, ".exe" ) == 0 ||
++ 			     strcmp( suffix, ".EXE" ) == 0)
++ 				suffix -= 2;
++ 			else
++ 				suffix += 2;
++ 			}
++ 		else if (name_len >= 2)
++ 			suffix = program_name + name_len - 2;
++ 
++ 		if (suffix && (suffix[2] == '.' || suffix[2] == '\0') &&
++ 		    (!strncmp(suffix, "xx", 2) || !strncmp(suffix, "XX", 2) ||
++ 		     !strncmp(suffix, "pp", 2) || !strncmp(suffix, "PP", 2)))
++ 			C_plus_plus = true;
++ 	}
++ #endif
+  
+  	if ( program_name[0] != '\0' &&
+  	     program_name[strlen( program_name ) - 1] == '+' )
+*** makefile.i~0	Wed Sep 11 02:59:10 1996
+--- makefile.in	Tue Mar 25 14:06:04 1997
+***************
+*** 62,68 ****
+  CPPFLAGS = -I. -I$(srcdir)
+  
+  .c.o:
+! 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
+  
+  HEADERS = flexdef.h version.h
+  
+--- 62,68 ----
+  CPPFLAGS = -I. -I$(srcdir)
+  
+  .c.o:
+! 	$(CC) -c $(CPPFLAGS) $(DEFS) $(CFLAGS) $<
+  
+  HEADERS = flexdef.h version.h
+  
+*** misc/texinfo/flex.t~0	Thu Apr 20 22:23:52 1995
+--- misc/texinfo/flex.texi	Tue Mar 25 16:07:56 1997
+***************
+*** 247,262 ****
+  @section Description
+  
+  @code{flex} is a tool for generating @dfn{scanners}: programs which
+! recognized lexical patterns in text.  @code{flex} reads the given
+! input files, or its standard input if no file names are
+! given, for a description of a scanner to generate.  The
+! description is in the form of pairs of regular expressions
+! and C code, called @dfn{rules}. @code{flex} generates as output a C
+! source file, @file{lex.yy.c}, which defines a routine @samp{yylex()}.
+! This file is compiled and linked with the @samp{-lfl} library to
+! produce an executable.  When the executable is run, it
+! analyzes its input for occurrences of the regular
+! expressions.  Whenever it finds one, it executes the
+  corresponding C code.
+  
+  @node Examples, Format, Description, Top
+--- 247,261 ----
+  @section Description
+  
+  @code{flex} is a tool for generating @dfn{scanners}: programs which
+! recognized lexical patterns in text.  @code{flex} reads the given input
+! files, or its standard input if no file names are given, for a
+! description of a scanner to generate.  The description is in the form of
+! pairs of regular expressions and C code, called @dfn{rules}. @code{flex}
+! generates as output a C source file, @file{lex.yy.c} (@file{lexyy.c} on
+! MS-DOS), which defines a routine @samp{yylex()}.  This file is compiled
+! and linked with the @samp{-lfl} library to produce an executable.  When
+! the executable is run, it analyzes its input for occurrences of the
+! regular expressions.  Whenever it finds one, it executes the
+  corresponding C code.
+  
+  @node Examples, Format, Description, Top
+***************
+*** 1037,1046 ****
+  @node Generated scanner, Start conditions, Actions, Top
+  @section The generated scanner
+  
+! The output of @code{flex} is the file @file{lex.yy.c}, which contains
+! the scanning routine @samp{yylex()}, a number of tables used by
+! it for matching tokens, and a number of auxiliary routines
+! and macros.  By default, @samp{yylex()} is declared as follows:
+  
+  @example
+  int yylex()
+--- 1036,1045 ----
+  @node Generated scanner, Start conditions, Actions, Top
+  @section The generated scanner
+  
+! The output of @code{flex} is the file @file{lex.yy.c} (@file{lexyy.c} on
+! MS-DOS), which contains the scanning routine @samp{yylex()}, a number of
+! tables used by it for matching tokens, and a number of auxiliary
+! routines and macros.  By default, @samp{yylex()} is declared as follows:
+  
+  @example
+  int yylex()
+***************
+*** 2247,2257 ****
+  
+  @item -Pprefix
+  changes the default @samp{yy} prefix used by @code{flex} for all
+! globally-visible variable and function names to
+! instead be @var{prefix}.  For example, @samp{-Pfoo} changes the
+! name of @code{yytext} to @file{footext}.  It also changes the
+! name of the default output file from @file{lex.yy.c} to
+! @file{lex.foo.c}.  Here are all of the names affected:
+  
+  @example
+  yy_create_buffer
+--- 2246,2256 ----
+  
+  @item -Pprefix
+  changes the default @samp{yy} prefix used by @code{flex} for all
+! globally-visible variable and function names to instead be @var{prefix}.
+! For example, @samp{-Pfoo} changes the name of @code{yytext} to
+! @file{footext}.  It also changes the name of the default output file
+! from @file{lex.yy.c} to @file{lex.foo.c} (@file{lexfoo.c} on MS-DOS).
+! Here are all of the names affected:
+  
+  @example
+  yy_create_buffer
+***************
+*** 2769,2781 ****
+  and default echoing is still done to @code{yyout}.  Both of these
+  remain @samp{FILE *} variables and not C++ @code{streams}.
+  
+! You can also use @code{flex} to generate a C++ scanner class, using
+! the @samp{-+} option, (or, equivalently, @samp{%option c++}), which
+! is automatically specified if the name of the flex executable ends
+! in a @samp{+}, such as @code{flex++}.  When using this option, flex
+! defaults to generating the scanner to the file @file{lex.yy.cc} instead
+! of @file{lex.yy.c}.  The generated scanner includes the header file
+! @file{FlexLexer.h}, which defines the interface to two C++ classes.
+  
+  The first class, @code{FlexLexer}, provides an abstract base
+  class defining the general scanner class interface.  It
+--- 2768,2783 ----
+  and default echoing is still done to @code{yyout}.  Both of these
+  remain @samp{FILE *} variables and not C++ @code{streams}.
+  
+! You can also use @code{flex} to generate a C++ scanner class, using the
+! @samp{-+} option, (or, equivalently, @samp{%option c++}), which is
+! automatically specified if the name of the flex executable ends in a
+! @samp{+}, such as @code{flex++}.  (On MS-DOS, @samp{+} si not allowed in
+! a filename, so a name which ends in @samp{xx} or @samp{pp} also causes
+! @code{flex} to generate a C++ scanner class on this platform.)  When
+! using this option, flex defaults to generating the scanner to the file
+! @file{lex.yy.cc} (@file{lexyy.cc} on MS-DOS) instead of @file{lex.yy.c}.
+! The generated scanner includes the header file @file{FlexLexer.h}, which
+! defines the interface to two C++ classes.
+  
+  The first class, @code{FlexLexer}, provides an abstract base
+  class defining the general scanner class interface.  It
+***************
+*** 3292,3301 ****
+  library with which scanners must be linked.
+  
+  @item lex.yy.c
+! generated scanner (called @file{lexyy.c} on some systems).
+  
+  @item lex.yy.cc
+! generated C++ scanner class, when using @samp{-+}.
+  
+  @item <FlexLexer.h>
+  header file defining the C++ scanner base class,
+--- 3294,3305 ----
+  library with which scanners must be linked.
+  
+  @item lex.yy.c
+! generated scanner (called @file{lexyy.c} on some systems, such as
+! MS-DOS).
+  
+  @item lex.yy.cc
+! generated C++ scanner class, when using @samp{-+} (called
+! @file{lexyy.cc} on some systems).
+  
+  @item <FlexLexer.h>
+  header file defining the C++ scanner base class,
+*** misc/msdos/configur.b~0	Thu Nov 10 07:01:44 1994
+--- misc/msdos/configur.bat	Mon Mar 24 11:56:22 1997
+***************
+*** 1,6 ****
+  @echo off
+  
+- sed -e "s/y\.tab\./parse_tab\./" -e "/sed/ s/'/\"/g" < Makefile.in > Makefile
+  sed -f MISC/MSDOS/djgpp.sed Makefile.in > Makefile
+! 
+! update initscan.c scan.c
+--- 1,4 ----
+  @echo off
+  
+  sed -f MISC/MSDOS/djgpp.sed Makefile.in > Makefile
+! update MISC/MSDOS/config.h config.h
+*** misc/msdos/djgpp.s~0	Thu Nov 10 07:01:52 1994
+--- misc/msdos/djgpp.sed	Tue Mar 25 15:06:10 1997
+***************
+*** 1,12 ****
+! s/y\.tab\./parse_tab\./
+  s/@DEFS@/-DMS_DOS/
+  s/@LIBS@//
+  s/@srcdir@/./
+! s/@YACC@/bison/
+  s/@CC@/gcc/
+  s/@RANLIB@/ranlib/
+  s/@ALLOCA@//
+! /^flex/ s/\.bootstrap//
+! /sed.*extern.*malloc/ c\
+! 	@mv parse_tab.c parse.c
+! /rm.*parse_tab.c/ d
+--- 1,16 ----
+! s/y\.tab\./y_tab\./g
+! s/\.bootstrap/_bootstrap/g
+  s/@DEFS@/-DMS_DOS/
+  s/@LIBS@//
+  s/@srcdir@/./
+! s/@YACC@/bison -y/
+  s/@CC@/gcc/
+  s/@RANLIB@/ranlib/
+  s/@ALLOCA@//
+! s/@SET_MAKE@//
+! s/@CFLAGS@/-O2 -g/
+! s/@CPPFLAGS@//
+! s/@INSTALL@/ginstall/
+! s/@INSTALL_PROGRAM@/ginstall -c/
+! s/@INSTALL_DATA@/ginstall -m 644/
+! /^ *config.h *:/ d
+*** misc/msdos/config.h~0	Tue Mar 25 16:43:44 1997
+--- misc/msdos/config.h	Mon Mar 24 11:56:42 1997
+***************
+*** 0 ****
+--- 1 ----
++ #include <sys/config.h>

@@ -1,0 +1,35 @@
+{
+ENTERO A=23
+ARRAY A[12]={12,12,1,1,2}
+CADENA A
+}
+INICIO
+SI (A>=23) 
+{
+b=a+w
+}
+FINSI
+SI (ER==34) 
+{
+SI (56<=23)
+{
+S=E+E
+S=E+E
+}
+FINSI
+}
+FINSI
+PARA (A=1,A<=23,A--)
+{
+A=A+W-E-R-E+E*A[23]
+}
+FINPARA
+SI (A==A) & (B==2) % (A>=E)
+{
+
+}
+SINO
+{
+}
+FINSI
+FINAL

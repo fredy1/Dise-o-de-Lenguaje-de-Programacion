@@ -1,0 +1,65 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:562: checking for a BSD compatible install
+configure:615: checking whether build environment is sane
+configure:672: checking whether make sets ${MAKE}
+configure:718: checking for working aclocal
+configure:731: checking for working autoconf
+configure:744: checking for working automake
+configure:757: checking for working autoheader
+configure:770: checking for working makeinfo
+configure:793: checking for gcc
+configure:906: checking whether the C compiler (gcc  ) works
+configure:922: gcc -o conftest    conftest.c  1>&5
+configure:948: checking whether the C compiler (gcc  ) is a cross-compiler
+configure:953: checking whether we are using GNU C
+configure:981: checking whether gcc accepts -g
+configure:1013: checking how to run the C preprocessor
+configure:1094: checking for minix/config.h
+configure:1142: checking for POSIXized ISC
+configure:1166: checking for gcc option to accept ANSI C
+configure:1254: checking for a BSD compatible install
+configure:1309: checking for ranlib
+configure:1339: checking for ANSI C header files
+configure:1446: checking for ctype.h
+configure:1446: checking for locale.h
+configure:1446: checking for memory.h
+configure:1446: checking for stdlib.h
+configure:1446: checking for string.h
+configure:1446: checking for unistd.h
+configure:1486: checking for working const
+configure:1563: checking for function prototypes
+configure:1725: checking for working alloca.h
+configure:1758: checking for alloca
+configure:1959: checking for mkstemp
+configure:1959: checking for setlocale
+configure:2014: checking whether calloc must be declared
+configure:2014: checking whether realloc must be declared
+configure:2074: checking for inline
+configure:2114: checking for off_t
+configure:2147: checking for size_t
+configure:2183: checking for unistd.h
+configure:2222: checking for getpagesize
+configure:2275: checking for working mmap
+configure:2451: checking for argz.h
+configure:2451: checking for limits.h
+configure:2451: checking for locale.h
+configure:2451: checking for nl_types.h
+configure:2451: checking for malloc.h
+configure:2451: checking for string.h
+configure:2451: checking for unistd.h
+configure:2451: checking for sys/param.h
+configure:2491: checking for getcwd
+configure:2491: checking for munmap
+configure:2491: checking for putenv
+configure:2491: checking for setenv
+configure:2491: checking for setlocale
+configure:2491: checking for strchr
+configure:2491: checking for strcasecmp
+configure:2491: checking for strdup
+configure:2491: checking for __argz_count
+configure:2491: checking for __argz_stringify
+configure:2491: checking for __argz_next
+configure:2610: checking for LC_MESSAGES
+configure:2643: checking whether NLS is requested
